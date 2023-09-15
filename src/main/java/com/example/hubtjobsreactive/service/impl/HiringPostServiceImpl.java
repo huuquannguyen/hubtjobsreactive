@@ -6,6 +6,7 @@ import com.example.hubtjobsreactive.dto.HiringPostRequest;
 import com.example.hubtjobsreactive.repository.HiringPostRepository;
 import com.example.hubtjobsreactive.service.HiringPostService;
 import lombok.RequiredArgsConstructor;
+import org.reactivestreams.Publisher;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.codec.multipart.FilePart;
@@ -14,6 +15,7 @@ import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.nio.file.Path;
@@ -51,16 +53,30 @@ public class HiringPostServiceImpl implements HiringPostService {
                     post.setCreatedDate(LocalDateTime.now());
                     return Mono.just(post);
                 })
-                .zipWhen(t -> uploadFile(filePart, t.getT1()))
+                .zipWhen(t -> filePart != null && !filePart.filename().equals("")
+                        ? uploadFile(filePart, t.getT1())
+                        : Mono.just(""))
                 .flatMap(t -> {
                     t.getT1().getT2().setImgUrl(t.getT2());
                     return hiringPostRepository.save(t.getT1().getT2());
                 })
-                .map(r -> {
-                    HiringPostResponse response = new HiringPostResponse();
-                    BeanUtils.copyProperties(r, response);
-                    return response;
-                });
+                .map(this::mapToResponse);
+    }
+
+    @Override
+    public Mono<HiringPostResponse> getHiringPostById(Long id) {
+        Mono<HiringPost> hiringPostMono = hiringPostRepository.findById(id);
+        return hiringPostMono.map(this::mapToResponse);
+    }
+
+    @Override
+    public Flux<HiringPostResponse> getAllPost() {
+        return hiringPostRepository.findAll().map(this::mapToResponse);
+    }
+
+    @Override
+    public Flux<HiringPostResponse> searchPost(String keyword) {
+        return hiringPostRepository.findByKeyword(keyword).map(this::mapToResponse);
     }
 
     public Mono<String> uploadFile(FilePart filePartMono, String createdBy) {
@@ -71,5 +87,11 @@ public class HiringPostServiceImpl implements HiringPostService {
         String extension = fileName.substring(fileName.lastIndexOf("."));
         Path absolutePath = path.resolve(newImgName + extension).toAbsolutePath();
         return filePartMono.transferTo(absolutePath).then(Mono.just(absolutePath.toString()));
+    }
+
+    private HiringPostResponse mapToResponse(HiringPost post) {
+        HiringPostResponse response = new HiringPostResponse();
+        BeanUtils.copyProperties(post, response);
+        return response;
     }
 }
