@@ -1,7 +1,6 @@
 # hubtjobs reactive
 
-**demo secure endpoint**
+**demo create hiring post**
 
 
-https://github.com/huuquannguyen/hubtjobsreactive/assets/80301438/82986c19-da83-4a7d-a161-3d91410cdeb4
-
+https://github.com/huuquannguyen/hubtjobsreactive/assets/80301438/93de4f61-219d-444e-a222-d354c73704d0
