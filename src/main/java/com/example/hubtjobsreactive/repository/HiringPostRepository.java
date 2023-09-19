@@ -7,7 +7,7 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Flux;
 
 public interface HiringPostRepository extends ReactiveCrudRepository<HiringPost, Long> {
-    @Query("SELECT * from hiring_post where lower(title) like lower(concat('%', :keyword, '%')) " +
+    @Query("SELECT * from hiring_post where :keyword is null or lower(title) like lower(concat('%', :keyword, '%')) " +
             "or lower(category) like lower(concat('%', :keyword, '%')) " +
             "or lower(tag1) = lower(:keyword) " +
             "or lower(tag2) = lower(:keyword) " +

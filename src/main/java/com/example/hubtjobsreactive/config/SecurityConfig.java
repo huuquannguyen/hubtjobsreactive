@@ -25,7 +25,9 @@ public class SecurityConfig {
                 .authorizeExchange()
                 .pathMatchers("/poster/**")
                 .hasAnyRole("poster")
-                .pathMatchers("/**")
+                .pathMatchers("/actuator/**")
+                .permitAll()
+                .anyExchange()
                 .authenticated()
                 .and()
                 .oauth2ResourceServer(oauth2 -> oauth2
