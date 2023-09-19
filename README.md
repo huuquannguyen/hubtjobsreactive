@@ -1,10 +1,10 @@
 # hubtjobs reactive
 
-**Api hit count**
-![image](https://github.com/huuquannguyen/hubtjobsreactive/assets/80301438/f9523431-c84b-4aa9-bf93-46fac79c35ce)
+**% of failed API request over total API request**
+![image](https://github.com/huuquannguyen/hubtjobsreactive/assets/80301438/83e2587f-6b63-45fc-9097-4ba77909bb91)
 
 
 
 
-**Latency of 95th percentile of all API**
-![image](https://github.com/huuquannguyen/hubtjobsreactive/assets/80301438/3608e3d5-7ef3-4cee-ad00-18d63c90f607)
+**Count failed API request by Exception name**
+![image](https://github.com/huuquannguyen/hubtjobsreactive/assets/80301438/22ede631-deca-496b-88f2-a317cdcd50c1)
