@@ -33,3 +33,5 @@ build/
 .vscode/
 
 file-upload/
+
+src/test/resources/file-upload/post-image
