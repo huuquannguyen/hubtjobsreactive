@@ -5,6 +5,8 @@ import lombok.Data;
 @Data
 public class HiringPostResponse {
 
+    private Long id;
+
     private String title;
 
     private String category;

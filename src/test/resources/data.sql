@@ -1,0 +1,3 @@
+insert into hiring_post (title, category, content, views, created_by, created_date) values ('job', 'category', 'hello', 1, 'user', '2023-09-20 10:15:20');
+insert into hiring_post (title, category, content, views, created_by, created_date) values ('job1', 'category1', 'hello1', 1, 'user1', '2023-09-19 10:15:20');
+insert into hiring_post (title, category, content, views, created_by, created_date) values ('job2', 'category2', 'hello2', 1, 'user2', '2023-09-18 10:15:20');
