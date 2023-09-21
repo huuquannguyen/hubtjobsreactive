@@ -1,22 +1,22 @@
 package com.example.hubtjobsreactive.service.impl;
 
+import com.example.hubtjobsreactive.dto.HiringPostRequest;
 import com.example.hubtjobsreactive.dto.HiringPostResponse;
 import com.example.hubtjobsreactive.entity.HiringPost;
-import com.example.hubtjobsreactive.dto.HiringPostRequest;
 import com.example.hubtjobsreactive.repository.HiringPostRepository;
 import com.example.hubtjobsreactive.service.HiringPostService;
 import lombok.RequiredArgsConstructor;
-import org.reactivestreams.Publisher;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.codec.multipart.FilePart;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.*;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,8 +29,17 @@ public class HiringPostServiceImpl implements HiringPostService {
 
     private final HiringPostRepository hiringPostRepository;
 
+    private final FluxProcessor<Message<?>, Message<?>> requestChannelMessageEmitter = UnicastProcessor.<Message<?>>create().serialize();
+
+    private final FluxSink<Message<?>> requestChannelSink = requestChannelMessageEmitter.sink();
+
     @Value("${file-upload.post-image}")
     private String postImageDirectory;
+
+    @Override
+    public Flux<Message<?>> getProducer() {
+        return requestChannelMessageEmitter;
+    }
 
     @Override
     public Mono<HiringPostResponse> createHiringPost(HiringPostRequest request, FilePart filePart) {
@@ -60,7 +69,11 @@ public class HiringPostServiceImpl implements HiringPostService {
                     t.getT1().getT2().setImgUrl(t.getT2());
                     return hiringPostRepository.save(t.getT1().getT2());
                 })
-                .map(this::mapToResponse);
+                .map(this::mapToResponse)
+                .doOnSuccess(r -> {
+                    Message<HiringPostResponse> message = MessageBuilder.withPayload(r).build();
+                    requestChannelSink.next(message);
+                });
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.example.hubtjobsreactive.config.test;
+package com.example.hubtjobsreactive.test;
 
 import io.r2dbc.spi.ConnectionFactory;
 import org.springframework.context.annotation.Bean;
