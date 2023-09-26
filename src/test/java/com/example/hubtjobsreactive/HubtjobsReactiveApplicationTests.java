@@ -1,9 +1,9 @@
 package com.example.hubtjobsreactive;
 
-import com.example.hubtjobsreactive.config.test.H2DbTestInitializer;
 import com.example.hubtjobsreactive.dto.HiringPostResponse;
 import com.example.hubtjobsreactive.repository.HiringPostRepository;
 import com.example.hubtjobsreactive.security.WithMockJwt;
+import com.example.hubtjobsreactive.test.H2DbTestInitializer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
